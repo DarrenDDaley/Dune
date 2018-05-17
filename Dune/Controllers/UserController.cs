@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 using Dune.Models;
 using Dune.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +10,12 @@ namespace Dune.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        IUserRepository repository;
+        private readonly IMapper mapper;
+        private IUserRepository repository;
 
-        public UserController(IUserRepository repository)
+        public UserController(IMapper mapper, IUserRepository repository)
         {
+            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
@@ -28,15 +29,8 @@ namespace Dune.Controllers
         [Route("register")]
         public IActionResult Post([FromBody]UserApiModel user)
         {
-            var userAdd = new User()
-            {
-                UserId = Guid.NewGuid(),
-                UserName = "something",
-                Email = "darren.daley@email.com",
-                Password = "password"
-            };
-
-            repository.InsertUser(userAdd);
+            var userModel = mapper.Map<User>(user);
+            userModel.UserId = Guid.NewGuid();
 
             return Ok();
         }

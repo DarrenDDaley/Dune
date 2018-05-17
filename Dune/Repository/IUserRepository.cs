@@ -4,6 +4,6 @@ namespace Dune.Repository
 {
     public interface IUserRepository
     {
-        bool InsertUser(User user);
+        void InsertUser(User user);
     }
 }

@@ -10,6 +10,10 @@ namespace Dune.Models
 
         public string Email { get; set; }
 
-        public string Password { get; set; }
+        public string Password
+        {
+            get { return Password; }
+            set { Password = Hash.Password(value); }
+        }
     }
 }
