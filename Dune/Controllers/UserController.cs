@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dune.Models;
+using Dune.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dune.Controllers
@@ -10,8 +11,11 @@ namespace Dune.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        public UserController()
+        IUserRepository repository;
+
+        public UserController(IUserRepository repository)
         {
+            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
         [HttpGet]
@@ -24,11 +28,17 @@ namespace Dune.Controllers
         [Route("register")]
         public IActionResult Post([FromBody]UserApiModel user)
         {
-            if (ModelState.IsValid) {
-                return Ok();
-            }
+            var userAdd = new User()
+            {
+                UserId = Guid.NewGuid(),
+                UserName = "something",
+                Email = "darren.daley@email.com",
+                Password = "password"
+            };
 
-            return BadRequest(ModelState);
+            repository.InsertUser(userAdd);
+
+            return Ok();
         }
     }
 }
